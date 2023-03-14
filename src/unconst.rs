@@ -61,6 +61,10 @@ pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {
             unconst_bounds(&mut r#trait.supertraits);
             return quote!(#r#trait).into()
         }
+        Item::Type(mut r#type) => {
+            unconst_generics(&mut r#type.generics);
+            return quote!(#r#type).into()
+        }
         Item::Verbatim(mut ts) => {
             unconst_impl_const(&mut ts);
             return ts.into()
