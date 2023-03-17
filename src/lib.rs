@@ -1,6 +1,9 @@
 #![no_std]
 
 #[cfg(not(feature = "const"))]
+extern crate alloc;
+
+#[cfg(not(feature = "const"))]
 mod unconst;
 
 use proc_macro::TokenStream;

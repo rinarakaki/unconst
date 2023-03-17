@@ -1,6 +1,5 @@
-extern crate alloc;
-
 mod impl_const;
+mod auto_deref;
 
 use alloc::{
     boxed::Box,
@@ -16,7 +15,7 @@ use syn::{
     TypeParamBound, TraitBound, Signature, WherePredicate, Meta, Type, Expr,
     ItemConst,
     punctuated::Punctuated,
-    token::Plus
+    token::Plus,
 };
 
 pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -78,7 +77,8 @@ fn lazylock(r#const: &mut ItemConst) {
     let ty = quote!(std::sync::LazyLock<#ty>);
     let ty = parse2::<Type>(ty).unwrap();
     r#const.ty = Box::new(ty);
-    let expr = &r#const.expr;
+    let expr = r#const.expr.as_mut();
+    auto_deref::auto_deref(expr);
     let expr = quote!(std::sync::LazyLock::new(|| #expr));
     let expr = parse2::<Expr>(expr).unwrap();
     r#const.expr = Box::new(expr);
