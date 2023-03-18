@@ -1,5 +1,5 @@
+mod auto_clone;
 mod impl_const;
-mod auto_deref;
 
 use alloc::{
     boxed::Box,
@@ -78,7 +78,7 @@ fn lazylock(r#const: &mut ItemConst) {
     let ty = parse2::<Type>(ty).unwrap();
     r#const.ty = Box::new(ty);
     let expr = r#const.expr.as_mut();
-    auto_deref::auto_deref(expr);
+    auto_clone::auto_clone(expr);
     let expr = quote!(std::sync::LazyLock::new(|| #expr));
     let expr = parse2::<Expr>(expr).unwrap();
     r#const.expr = Box::new(expr);
