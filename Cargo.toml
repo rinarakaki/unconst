@@ -1,6 +1,6 @@
 [package]
 name = "unconst"
-version = "0.7.0"
+version = "0.8.0"
 edition = "2021"
 description = "Macro to unconst const/fn/enum/struct/trait/impl/type items"
 license = "MIT/Apache-2.0"
