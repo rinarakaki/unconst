@@ -94,7 +94,7 @@ fn unconst_attrs(attrs: &mut Vec<Attribute>) {
                 }
             }
             Meta::List(list) => {
-                let mut segment = list.path.segments.first_mut().unwrap();
+                let segment = list.path.segments.first_mut().unwrap();
                 if segment.ident.to_string() == "derive_const" {
                     segment.ident = Ident::new("derive", segment.ident.span());
                 }
