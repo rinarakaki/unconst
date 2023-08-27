@@ -1,10 +1,10 @@
 [package]
 name = "unconst"
-version = "0.8.0"
+version = "0.9.0"
 edition = "2021"
 description = "Macro to unconst const/fn/enum/struct/trait/impl/type items"
 license = "MIT/Apache-2.0"
-homepage = "https://github.com/synthet-ic/unconst"
+homepage = "https://gitlab.com/synthetic/unconst"
 documentation = "https://docs.rs/unconst"
 rust-version = "1.62.0"
 readme = "README.md"
@@ -13,7 +13,7 @@ readme = "README.md"
 proc-macro = true
 
 [dependencies]
-proc-macro2 = { version = "1", optional = true }
+proc-macro2 = { version = "1.0.60", optional = true }
 quote = { version = "1", optional = true }
 syn = { version = "2", features = ["full", "parsing", "extra-traits"], optional = true }
 
