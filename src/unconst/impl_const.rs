@@ -1,17 +1,13 @@
 extern crate alloc;
 
-use alloc::{
-    boxed::Box,
-    vec::Vec
-};
+use alloc::{boxed::Box, vec::Vec};
 
 use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt};
 use syn::{
-    Attribute, Generics, Path, Type, ImplItem, Token, Lifetime, Ident,
-    TypePath,
+    braced, bracketed,
     parse::{Parse, ParseStream, Result},
-    token, braced, bracketed, AttrStyle,
+    token, AttrStyle, Attribute, Generics, Ident, ImplItem, Lifetime, Path, Token, Type, TypePath,
 };
 pub struct ItemImplConst {
     pub attrs: Vec<Attribute>,
