@@ -5,9 +5,10 @@ use alloc::{boxed::Box, vec::Vec};
 use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt};
 use syn::{
-    braced, bracketed,
+    AttrStyle, Attribute, Generics, Ident, ImplItem, Lifetime, Path, Token, Type, TypePath, braced,
+    bracketed,
     parse::{Parse, ParseStream, Result},
-    token, AttrStyle, Attribute, Generics, Ident, ImplItem, Lifetime, Path, Token, Type, TypePath,
+    token,
 };
 pub struct ItemImplConst {
     pub attrs: Vec<Attribute>,

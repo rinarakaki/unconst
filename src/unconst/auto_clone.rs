@@ -2,8 +2,8 @@ use alloc::{boxed::Box, vec::Vec};
 
 use proc_macro2::{Ident, Span};
 use syn::{
-    token::{Dot, Paren},
     Expr, ExprMethodCall,
+    token::{Dot, Paren},
 };
 
 pub fn auto_clone(expr: &mut Expr) {
