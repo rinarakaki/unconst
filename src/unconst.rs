@@ -7,9 +7,9 @@ use proc_macro::TokenStream;
 use proc_macro2::Ident;
 use quote::quote;
 use syn::{
-    parse, parse2, punctuated::Punctuated, token::Plus, Attribute, Expr, GenericParam, Generics,
-    ImplItem, Item, ItemConst, Meta, Signature, TraitBound, TraitItem, Type, TypeParamBound,
-    WherePredicate,
+    Attribute, Expr, GenericParam, Generics, ImplItem, Item, ItemConst, Meta, Signature,
+    TraitBound, TraitItem, Type, TypeParamBound, WherePredicate, parse, parse2,
+    punctuated::Punctuated, token::Plus,
 };
 
 pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {

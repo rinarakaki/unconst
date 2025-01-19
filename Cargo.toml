@@ -1,12 +1,12 @@
 [package]
 name = "unconst"
 version = "0.10.0"
-edition = "2021"
+edition = "2024"
 description = "Macro to unconst const/fn/enum/struct/trait/impl/type items"
 license = "MIT/Apache-2.0"
 homepage = "https://gitlab.com/synthetic/unconst"
 documentation = "https://docs.rs/unconst"
-rust-version = "1.62.0"
+rust-version = "1.85.0"
 readme = "README.md"
 
 [lib]
