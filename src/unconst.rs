@@ -1,15 +1,14 @@
 mod auto_clone;
 mod impl_const;
 
-use alloc::{boxed::Box, vec::Vec};
+use alloc::vec::Vec;
 
 use proc_macro::TokenStream;
 use proc_macro2::Ident;
 use quote::quote;
 use syn::{
-    Attribute, Expr, GenericParam, Generics, ImplItem, Item, ItemConst, Meta, Signature,
-    TraitBound, TraitItem, Type, TypeParamBound, WherePredicate, parse, parse2,
-    punctuated::Punctuated, token::Plus,
+    Attribute, Expr, GenericParam, Generics, ImplItem, Item, ItemConst, Meta, Signature, TraitItem,
+    Type, TypeParamBound, WherePredicate, parse, parse2, punctuated::Punctuated, token::Plus,
 };
 
 pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -70,12 +69,12 @@ fn lazylock(r#const: &mut ItemConst) {
     let ty = &r#const.ty;
     let ty = quote!(std::sync::LazyLock<#ty>);
     let ty = parse2::<Type>(ty).unwrap();
-    r#const.ty = Box::new(ty);
+    *r#const.ty = ty;
     let expr = r#const.expr.as_mut();
     auto_clone::auto_clone(expr);
     let expr = quote!(std::sync::LazyLock::new(|| #expr));
     let expr = parse2::<Expr>(expr).unwrap();
-    r#const.expr = Box::new(expr);
+    *r#const.expr = expr;
 }
 
 fn unconst_attrs(attrs: &mut Vec<Attribute>) {
