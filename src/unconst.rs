@@ -129,35 +129,12 @@ fn unconst_generics(generics: &mut Generics) {
 fn unconst_bounds(bounds: &mut Punctuated<TypeParamBound, Plus>) {
     for bound in bounds.iter_mut() {
         match bound {
-            TypeParamBound::Trait(bound) => unconst_trait_bound(bound),
             TypeParamBound::Verbatim(tt) => {
                 *tt = core::mem::take(tt).into_iter().skip(2).collect();
             }
             _ => continue,
         }
     }
-}
-
-fn unconst_trait_bound(bound: &mut TraitBound) {
-    let mut segments = Punctuated::new();
-    let mut pairs = core::mem::take(&mut bound.path.segments).into_pairs();
-    if let Some(pair) = pairs.next() {
-        let (segment, punct) = pair.into_tuple();
-        if segment.ident != "const" {
-            segments.push_value(segment);
-            if let Some(punct) = punct {
-                segments.push_punct(punct);
-            }
-        }
-    }
-    for pair in pairs {
-        let (segment, punct) = pair.into_tuple();
-        segments.push_value(segment);
-        if let Some(punct) = punct {
-            segments.push_punct(punct);
-        }
-    }
-    bound.path.segments = segments;
 }
 
 fn unconst_impl_const(ts: &mut proc_macro2::TokenStream) {
