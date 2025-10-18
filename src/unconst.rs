@@ -1,15 +1,14 @@
 mod auto_clone;
 mod impl_const;
 
-use alloc::{boxed::Box, vec::Vec};
+use alloc::vec::Vec;
 
 use proc_macro::TokenStream;
 use proc_macro2::Ident;
 use quote::quote;
 use syn::{
-    Attribute, Expr, GenericParam, Generics, ImplItem, Item, ItemConst, Meta, Signature,
-    TraitBound, TraitItem, Type, TypeParamBound, WherePredicate, parse, parse2,
-    punctuated::Punctuated, token::Plus,
+    Attribute, Expr, GenericParam, Generics, ImplItem, Item, ItemConst, Meta, Signature, TraitItem,
+    Type, TypeParamBound, WherePredicate, parse, parse2, punctuated::Punctuated, token::Plus,
 };
 
 pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -28,13 +27,13 @@ pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {
             quote!(#r#enum).into()
         }
         Item::Impl(mut r#impl) => {
+            unconst_generics(&mut r#impl.generics);
             for item in r#impl.items.iter_mut() {
                 match item {
                     ImplItem::Fn(r#fn) => unconst_sig(&mut r#fn.sig),
                     _ => continue,
                 };
             }
-            unconst_generics(&mut r#impl.generics);
             quote!(#r#impl).into()
         }
         Item::Struct(mut r#struct) => {
@@ -44,14 +43,14 @@ pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {
         }
         Item::Trait(mut r#trait) => {
             unconst_attrs(&mut r#trait.attrs);
+            unconst_generics(&mut r#trait.generics);
+            unconst_bounds(&mut r#trait.supertraits);
             for item in r#trait.items.iter_mut() {
                 match item {
                     TraitItem::Fn(r#fn) => unconst_sig(&mut r#fn.sig),
                     _ => continue,
                 };
             }
-            unconst_generics(&mut r#trait.generics);
-            unconst_bounds(&mut r#trait.supertraits);
             quote!(#r#trait).into()
         }
         Item::Type(mut r#type) => {
@@ -70,12 +69,12 @@ fn lazylock(r#const: &mut ItemConst) {
     let ty = &r#const.ty;
     let ty = quote!(std::sync::LazyLock<#ty>);
     let ty = parse2::<Type>(ty).unwrap();
-    r#const.ty = Box::new(ty);
+    *r#const.ty = ty;
     let expr = r#const.expr.as_mut();
     auto_clone::auto_clone(expr);
     let expr = quote!(std::sync::LazyLock::new(|| #expr));
     let expr = parse2::<Expr>(expr).unwrap();
-    r#const.expr = Box::new(expr);
+    *r#const.expr = expr;
 }
 
 fn unconst_attrs(attrs: &mut Vec<Attribute>) {
@@ -129,35 +128,12 @@ fn unconst_generics(generics: &mut Generics) {
 fn unconst_bounds(bounds: &mut Punctuated<TypeParamBound, Plus>) {
     for bound in bounds.iter_mut() {
         match bound {
-            TypeParamBound::Trait(bound) => unconst_trait_bound(bound),
             TypeParamBound::Verbatim(tt) => {
-                *tt = core::mem::take(tt).into_iter().skip(2).collect();
+                *tt = core::mem::take(tt).into_iter().skip(1).collect();
             }
             _ => continue,
         }
     }
-}
-
-fn unconst_trait_bound(bound: &mut TraitBound) {
-    let mut segments = Punctuated::new();
-    let mut pairs = core::mem::take(&mut bound.path.segments).into_pairs();
-    if let Some(pair) = pairs.next() {
-        let (segment, punct) = pair.into_tuple();
-        if segment.ident != "const" {
-            segments.push_value(segment);
-            if let Some(punct) = punct {
-                segments.push_punct(punct);
-            }
-        }
-    }
-    for pair in pairs {
-        let (segment, punct) = pair.into_tuple();
-        segments.push_value(segment);
-        if let Some(punct) = punct {
-            segments.push_punct(punct);
-        }
-    }
-    bound.path.segments = segments;
 }
 
 fn unconst_impl_const(ts: &mut proc_macro2::TokenStream) {
