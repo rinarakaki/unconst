@@ -28,13 +28,13 @@ pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {
             quote!(#r#enum).into()
         }
         Item::Impl(mut r#impl) => {
+            unconst_generics(&mut r#impl.generics);
             for item in r#impl.items.iter_mut() {
                 match item {
                     ImplItem::Fn(r#fn) => unconst_sig(&mut r#fn.sig),
                     _ => continue,
                 };
             }
-            unconst_generics(&mut r#impl.generics);
             quote!(#r#impl).into()
         }
         Item::Struct(mut r#struct) => {
@@ -44,14 +44,14 @@ pub fn unconst(_attr: TokenStream, item: TokenStream) -> TokenStream {
         }
         Item::Trait(mut r#trait) => {
             unconst_attrs(&mut r#trait.attrs);
+            unconst_generics(&mut r#trait.generics);
+            unconst_bounds(&mut r#trait.supertraits);
             for item in r#trait.items.iter_mut() {
                 match item {
                     TraitItem::Fn(r#fn) => unconst_sig(&mut r#fn.sig),
                     _ => continue,
                 };
             }
-            unconst_generics(&mut r#trait.generics);
-            unconst_bounds(&mut r#trait.supertraits);
             quote!(#r#trait).into()
         }
         Item::Type(mut r#type) => {
