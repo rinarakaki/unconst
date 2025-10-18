@@ -129,7 +129,7 @@ fn unconst_bounds(bounds: &mut Punctuated<TypeParamBound, Plus>) {
     for bound in bounds.iter_mut() {
         match bound {
             TypeParamBound::Verbatim(tt) => {
-                *tt = core::mem::take(tt).into_iter().skip(2).collect();
+                *tt = core::mem::take(tt).into_iter().skip(1).collect();
             }
             _ => continue,
         }
